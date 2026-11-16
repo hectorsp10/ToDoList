@@ -15,8 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ToDos\DTOs\" />
-    <Folder Include="ToDos\Services\Create\" />
     <Folder Include="ToDos\Services\Delete\" />
     <Folder Include="ToDos\Services\Get\" />
     <Folder Include="ToDos\Services\Search\" />

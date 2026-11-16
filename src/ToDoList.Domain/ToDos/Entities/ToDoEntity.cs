@@ -7,12 +7,12 @@ namespace ToDoList.Domain.ToDos.Entities
 {
     public class ToDoEntity
     {
-        public ToDoId ToDoId { get; set; }
-        public ToDoTitle ToDoTitle { get; set; }
-        public ToDoDescription ToDoDescription { get; set; }
-        public ToDoStatus ToDoStatus { get; set; }
-        public ToDoCreationDate ToDoCreationDate { get; set; }
-        public ToDoDueDate ToDoDueDate { get; set; }
+        public ToDoId ToDoId { get; private set; }
+        public ToDoTitle ToDoTitle { get; private set; }
+        public ToDoDescription ToDoDescription { get; private set; }
+        public ToDoStatus ToDoStatus { get; private set; }
+        public ToDoCreationDate ToDoCreationDate { get; private set; }
+        public ToDoDueDate ToDoDueDate { get; private set; }
 
         public ToDoEntity(
             ToDoId toDoId, 
@@ -30,21 +30,19 @@ namespace ToDoList.Domain.ToDos.Entities
             ToDoDueDate = toDoDueDate;
         }
 
-        public ToDoEntity Create(
-            ToDoId toDoId,
-            ToDoTitle toDoTitle,
-            ToDoDescription toDoDescription,
-            ToDoStatus toDoStatus,
-            ToDoCreationDate toDoCreationDate,
-            ToDoDueDate toDoDueDate)
+        public static ToDoEntity Create(
+            string toDoTitle,
+            string? toDoDescription,
+            DateTime? toDoDueDate)
         {
             return new ToDoEntity(
-                toDoId,
-                toDoTitle,
-                toDoDescription,
-                toDoStatus,
-                toDoCreationDate,
-                toDoDueDate);
+                ToDoId.New(),
+                ToDoTitle.SetTitle(toDoTitle),
+                ToDoDescription.SetDescription(toDoDescription),
+                ToDoStatus.SetStatus(ToDoStatusEnum.NotStarted),
+                ToDoCreationDate.SetDateNow(),
+                ToDoDueDate.SetDate(toDoDueDate)
+            );
         }
 
         public void UpdateTitle(string toDoTitle)
