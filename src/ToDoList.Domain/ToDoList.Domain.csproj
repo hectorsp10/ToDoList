@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="ToDos\Entities\" />
+    <Folder Include="ToDos\Exceptions\" />
+    <Folder Include="ToDos\Repositories\" />
+    <Folder Include="ToDos\ValueObjects\" />
+  </ItemGroup>
+
+</Project>
