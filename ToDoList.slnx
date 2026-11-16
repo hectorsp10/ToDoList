@@ -9,6 +9,6 @@
     <Project Path="tests/ToDoList.Application.Tests/ToDoList.Application.Tests.csproj" />
     <Project Path="tests/ToDoList.Domain.Tests/ToDoList.Domain.Tests.csproj" />
     <Project Path="tests/ToDoList.Infrastructure.Tests/ToDoList.Infrastructure.Tests.csproj" />
-    <Project Path="tests/ToDoList.Integration.Tests/ToDoList.Integration.Tests.csproj" />
+    <Project Path="tests/ToDoList.API.IntegrationTests/ToDoList.API.IntegrationTests.csproj" />
   </Folder>
 </Solution>

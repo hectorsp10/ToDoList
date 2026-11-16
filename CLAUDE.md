@@ -76,7 +76,7 @@ ToDoList/
     ├── ToDoList.Infrastructure.Tests/ToDos/
     │   ├── Mappers/             TodoMapperTest
     │   └── Repositories/        TodoRepositoryTest
-    └── ToDoList.Integration.Tests/ToDos/
+    └── ToDoList.API.IntegrationTests/ToDos/
                                  TodosControllerTest
 ```
 
@@ -134,7 +134,7 @@ Los namespaces coinciden con las carpetas. Las carpetas de los tests replican la
 | Domain.Tests | `FluentAssertions` 7.2.0, `Bogus` |
 | Application.Tests | `FluentAssertions` 7.2.0, `Bogus`, `Moq` |
 | Infrastructure.Tests | `FluentAssertions` 7.2.0, `Bogus` |
-| Integration.Tests | `FluentAssertions` 7.2.0, `Microsoft.AspNetCore.Mvc.Testing` |
+| API.IntegrationTests | `FluentAssertions` 7.2.0, `Microsoft.AspNetCore.Mvc.Testing` |
 
 Además de estos, solo se permiten los que traen las plantillas de `dotnet new`. Usa la misma versión de EF Core en todos los proyectos.
 
