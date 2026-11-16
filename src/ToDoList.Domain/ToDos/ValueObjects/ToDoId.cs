@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ToDoList.Domain.ToDos.Exceptions;
+﻿using ToDoList.Domain.ToDos.Exceptions;
 
 namespace ToDoList.Domain.ToDos.ValueObjects
 {
@@ -9,7 +6,7 @@ namespace ToDoList.Domain.ToDos.ValueObjects
         // Se utiliza sealed record porque un value object
         // se define por su valor, no por identidad
     {
-        public Guid Value { get; }
+        public Guid Value { get; } // es public porque es necesario leerlo desde fuera. Al tener solo getter, es inmutable desde fuera de la clase
 
         // Constructor privado (solo se podrá crear un ToDoId a través de los métodos públicos
         private ToDoId(Guid value)
