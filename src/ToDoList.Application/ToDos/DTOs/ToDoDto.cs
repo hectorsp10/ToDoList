@@ -16,6 +16,6 @@ public sealed record ToDoDto(
         entity.ToDoTitle.Value,
         entity.ToDoDescription.Value,
         entity.ToDoStatus.Value,
-        entity.ToDoCreationDate.value,
+        entity.ToDoCreationDate.Value,
         entity.ToDoDueDate?.value);
 }

@@ -6,11 +6,11 @@ namespace ToDoList.Domain.ToDos.ValueObjects
 {
     public class ToDoCreationDate
     {
-        public DateTime value { get; }
+        public DateTime Value { get; }
 
         private ToDoCreationDate(DateTime value)
         {
-            this.value = value;
+            this.Value = value;
         }
 
         public static ToDoCreationDate SetDateNow()
