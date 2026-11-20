@@ -30,7 +30,7 @@ Reglas de dependencia:
 - **Infrastructure** → Application, Domain.
 - **API** → Application, Infrastructure (Infrastructure solo para registrar la DI en `Program.cs`).
 - Los controllers dependen solo de las interfaces de los servicios de Application, nunca del repositorio.
-- EF Core trabaja **solo con `TodoRepositoryEntity`**, nunca con la entidad de dominio. `TodoMapper` traduce entre ambas.
+- EF Core trabaja **solo con `ToDoRepositoryEntity`**, nunca con la entidad de dominio. `ToDoMapper` traduce entre ambas.
 
 ## Estructura
 
@@ -39,74 +39,74 @@ ToDoList/
 ├── src/
 │   ├── ToDoList.Domain/
 │   │   └── ToDos/
-│   │       ├── Entities/        TodoEntity, TodoStatusEnum
-│   │       ├── ValueObjects/    TodoId, TodoTitle, TodoDescription, TodoStatus, TodoCreatedAt
-│   │       ├── Repositories/    ITodoRepository
-│   │       └── Exceptions/      TodoNotFoundException, InvalidTodoException
+│   │       ├── Entities/        ToDoEntity, ToDoStatusEnum
+│   │       ├── ValueObjects/    ToDoId, ToDoTitle, ToDoDescription, ToDoStatus, ToDoCreationDate
+│   │       ├── Repositories/    IToDoRepository
+│   │       └── Exceptions/      ToDoNotFoundException, InvalidToDoException
 │   ├── ToDoList.Application/
 │   │   ├── ToDos/
-│   │   │   ├── DTOs/            TodoDto
+│   │   │   ├── DTOs/            ToDoDto
 │   │   │   └── Services/
-│   │   │       ├── Create/      CreateTodoCommand, ICreateTodoService, CreateTodoService
-│   │   │       ├── Get/         GetTodoQuery, IGetTodoService, GetTodoService
-│   │   │       ├── Search/      ISearchTodosService, SearchTodosService
-│   │   │       ├── Update/      UpdateTodoStatusCommand, IUpdateTodoStatusService, UpdateTodoStatusService
-│   │   │       └── Delete/      DeleteTodoCommand, IDeleteTodoService, DeleteTodoService
+│   │   │       ├── Create/      ToDoCreateCommand, IToDoCreator, ToDoCreator
+│   │   │       ├── Get/         ToDoGetQuery, IToDoGetter, ToDoGetter
+│   │   │       ├── Search/      IToDoSearcher, ToDoSearcher
+│   │   │       ├── Update/      ToDoUpdateStatusCommand, IToDoStatusUpdater, ToDoStatusUpdater
+│   │   │       └── Delete/      ToDoDeleteCommand, IToDoDeleter, ToDoDeleter
 │   │   └── DependencyInjection.cs
 │   ├── ToDoList.Infrastructure/
 │   │   ├── ToDos/
-│   │   │   ├── RepositoryEntities/   TodoRepositoryEntity
-│   │   │   ├── Mappers/              TodoMapper
-│   │   │   ├── Repositories/         TodoRepository
-│   │   │   └── Configurations/       TodoRepositoryEntityConfiguration
+│   │   │   ├── RepositoryEntities/   ToDoRepositoryEntity
+│   │   │   ├── Mappers/              ToDoMapper
+│   │   │   ├── Repositories/         ToDoRepository
+│   │   │   └── Configurations/       ToDoRepositoryEntityConfiguration
 │   │   ├── Shared/Persistence/       AppDbContext, Migrations/
 │   │   └── DependencyInjection.cs
 │   └── ToDoList.API/
 │       ├── ToDos/
-│       │   ├── Controllers/     TodosController
-│       │   └── Contracts/       CreateTodoRequest, UpdateTodoStatusRequest, TodoResponse
+│       │   ├── Controllers/     ToDosController
+│       │   └── Contracts/       CreateToDoRequest, UpdateToDoStatusRequest, ToDoResponse
 │       ├── Shared/Middleware/   ExceptionHandlingMiddleware
 │       └── Program.cs
 └── tests/
     ├── ToDoList.Domain.Tests/ToDos/
-    │   ├── Entities/            TodoEntityMother, TodoEntityTest
+    │   ├── Entities/            ToDoEntityMother, ToDoEntityTest
     │   └── ValueObjects/        Un *Test por value object
     ├── ToDoList.Application.Tests/ToDos/Services/<Operación>/
     │                            <Command>Mother, <Command>Test, <Servicio>Test
     ├── ToDoList.Infrastructure.Tests/ToDos/
-    │   ├── Mappers/             TodoMapperTest
-    │   └── Repositories/        TodoRepositoryTest
+    │   ├── Mappers/             ToDoMapperTest
+    │   └── Repositories/        ToDoRepositoryTest
     └── ToDoList.API.IntegrationTests/ToDos/
-                                 TodosControllerTest
+                                 ToDosControllerTest
 ```
 
 Los namespaces coinciden con las carpetas. Las carpetas de los tests replican las del proyecto que prueban.
 
 ## Domain
 
-- **Value objects**: `sealed record` con constructor privado, propiedad `Value` y métodos de fábrica que validan y lanzan `InvalidTodoException`.
-  - `TodoId` (`Guid`): `New()`; `From(Guid)` rechaza `Guid.Empty`.
-  - `TodoTitle` (`string`): obligatorio, `Trim()`, máximo 200 caracteres (constante `MaxLength`).
-  - `TodoDescription` (`string?`): opcional (vacío → `null`), máximo 1000 caracteres (constante `MaxLength`).
-  - `TodoStatus`: envuelve `TodoStatusEnum`; `Initial()` devuelve `Planned`; `Create(...)` valida con `Enum.IsDefined`.
-  - `TodoCreatedAt` (`DateTime` UTC): `Now()`; `From(DateTime)` rechaza fechas cuyo `Kind` no sea `Utc`.
-- **`TodoStatusEnum`**: `Planned`, `InProgress`, `Done`.
-- **`TodoEntity`**: `sealed class`, propiedades con su value object y `private set`, sin constructor vacío. Métodos de fábrica `Create(title, description)` (TODO nuevo) y `Restore(...)` (reconstruye uno existente). Método `ChangeStatus(TodoStatus)`.
-- **`ITodoRepository`**: `GetByIdAsync(TodoId)`, `GetAllAsync()`, `AddAsync(TodoEntity)`, `UpdateAsync(TodoEntity)`, `DeleteAsync(TodoId)`. Todos asíncronos y con `CancellationToken`.
+- **Value objects**: `sealed record` con constructor privado, propiedad `Value` y métodos de fábrica que validan y lanzan `InvalidToDoException`.
+  - `ToDoId` (`Guid`): `New()`; `From(Guid)` rechaza `Guid.Empty`.
+  - `ToDoTitle` (`string`): `SetTitle(...)`; obligatorio, `Trim()`, máximo 200 caracteres (constante `MaxLength`).
+  - `ToDoDescription` (`string?`): `SetDescription(...)`; opcional (vacío → `null`), máximo 1000 caracteres (constante `MaxLength`).
+  - `ToDoStatus`: envuelve `ToDoStatusEnum`; `Initial()` devuelve `NotStarted`; `SetStatus(...)` valida con `Enum.IsDefined`.
+  - `ToDoCreationDate` (`DateTime` UTC): `SetDateNow()`; `From(DateTime)` rechaza fechas cuyo `Kind` no sea `Utc`.
+- **`ToDoStatusEnum`**: `NotStarted`, `InProgress`, `Finished`.
+- **`ToDoEntity`**: `sealed class`, propiedades con su value object y `private set`, sin constructor vacío. Métodos de fábrica `Create(title, description)` (TODO nuevo) y `Restore(...)` (reconstruye uno existente). Método `UpdateStatus(ToDoStatusEnum)`.
+- **`IToDoRepository`**: `GetByIdAsync(ToDoId)`, `ListAllAsync()`, `CreateAsync(ToDoEntity)`, `UpdateAsync(ToDoEntity)`, `DeleteAsync(ToDoId)`. Todos asíncronos y con `CancellationToken`.
 
 ## Application
 
 - Commands y queries son `record` con tipos primitivos y van en la carpeta de su operación.
-- Cada servicio tiene su interfaz (puerto de entrada) en la misma carpeta y un único método `ExecuteAsync(..., CancellationToken)`.
-- Los servicios dependen solo de `ITodoRepository` y devuelven `TodoDto` (con `FromEntity`).
-- `Get`, `Update` y `Delete` lanzan `TodoNotFoundException` si el TODO no existe.
+- Cada servicio tiene su interfaz (puerto de entrada) en la misma carpeta y un único método con el verbo de la operación (`CreateAsync`, `GetAsync`, `SearchAsync`, `UpdateStatusAsync`, `DeleteAsync`), que recibe `CancellationToken`.
+- Los servicios dependen solo de `IToDoRepository` y devuelven `ToDoDto` (con `FromEntity`).
+- `Get`, `Update` y `Delete` lanzan `ToDoNotFoundException` si el TODO no existe.
 - `AddApplication()` registra cada servicio a mano como scoped (sin escaneo de ensamblados).
 
 ## Infrastructure
 
-- `TodoRepositoryEntity`: propiedades públicas con tipos primitivos (`Status` guardado como string).
-- `TodoMapper`: `ToRepositoryEntity` y `ToDomain` (usa `TodoEntity.Restore` y `DateTime.SpecifyKind(..., Utc)`, porque SQLite no conserva el `Kind`).
-- `UpdateAsync` carga la `TodoRepositoryEntity` existente, copia los cambios y guarda.
+- `ToDoRepositoryEntity`: propiedades públicas con tipos primitivos (`Status` guardado como string).
+- `ToDoMapper`: `ToRepositoryEntity` y `ToDomain` (usa `ToDoEntity.Restore` y `DateTime.SpecifyKind(..., Utc)`, porque SQLite no conserva el `Kind`).
+- `UpdateAsync` carga la `ToDoRepositoryEntity` existente, copia los cambios y guarda.
 - `AddInfrastructure(IConfiguration)` registra el `DbContext` (connection string `DefaultConnection`) y el repositorio.
 - Migraciones en `Shared/Persistence/Migrations`, con `ToDoList.API` como proyecto de inicio. `dotnet-ef` como herramienta local, nunca global.
 
@@ -121,7 +121,7 @@ Los namespaces coinciden con las carpetas. Las carpetas de los tests replican la
 | DELETE | `/api/todos/{id:guid}` | 204 | 404 |
 
 - Los contracts HTTP son distintos de los commands y DTOs de Application; se mapean en el controller.
-- `ExceptionHandlingMiddleware`: `InvalidTodoException` → 400, `TodoNotFoundException` → 404 y cualquier otra → 500. Siempre con `ProblemDetails`.
+- `ExceptionHandlingMiddleware`: `InvalidToDoException` → 400, `ToDoNotFoundException` → 404 y cualquier otra → 500. Siempre con `ProblemDetails`.
 - Enums serializados como string (`JsonStringEnumConverter`).
 
 ## Paquetes permitidos
@@ -145,5 +145,5 @@ Además de estos, solo se permiten los que traen las plantillas de `dotnet new`.
 - Nombres de test con el formato `WhenX_ShouldY` o `MethodName_ShouldY`.
 - Arrange / Act / Assert separados por líneas en blanco, sin comentarios.
 - **Object Mothers**: clase `<Tipo>Mother` con un método estático `GenerateCorrectly(...)` con parámetros opcionales nullable; lo que no se pasa se genera con Bogus.
-- `TodoEntityMother` vive en Domain.Tests y se reutiliza desde Application.Tests e Infrastructure.Tests.
+- `ToDoEntityMother` vive en Domain.Tests y se reutiliza desde Application.Tests e Infrastructure.Tests.
 - Repositorio y tests de integración con **SQLite en memoria** (`Data Source=:memory:` con la conexión abierta). Nunca el proveedor `InMemory` de EF Core.

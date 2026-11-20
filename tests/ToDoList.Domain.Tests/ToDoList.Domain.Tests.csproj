@@ -26,7 +26,6 @@
 
   <ItemGroup>
     <Folder Include="ToDos\Entities\" />
-    <Folder Include="ToDos\ValueObjects\" />
   </ItemGroup>
 
 </Project>
